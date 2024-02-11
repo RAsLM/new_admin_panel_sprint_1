@@ -10,7 +10,7 @@ class FilmWork:
     creation_date: datetime
     description: str
     type: str
-    created: datetime
+    created_at: datetime
     updated_at: datetime
     id: uuid.UUID = field(default_factory=uuid.uuid4)
     rating: float = field(default=0.0)
