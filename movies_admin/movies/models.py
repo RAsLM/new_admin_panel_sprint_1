@@ -12,8 +12,8 @@ class UUIDMixin(models.Model):
 
 
 class TimeStampedMixin(models.Model):
-    created = models.DateTimeField(_('created'), auto_now_add=True)
-    modified = models.DateTimeField(_('modified'), auto_now=True)
+    created_at = models.DateTimeField(_('created'), auto_now_add=True)
+    updated_at = models.DateTimeField(_('modified'), auto_now=True)
 
     class Meta:
         abstract = True
@@ -48,6 +48,9 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         db_table = "content\".\"film_work"
         verbose_name = 'Фильм'
         verbose_name_plural = 'Фильмы'
+        indexes = [
+            models.Index(fields=['creation_date'], name='film_work_creation_date_idx'),
+        ]
 
     def __str__(self):
         return self.title
@@ -56,7 +59,7 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
 class GenreFilmwork(UUIDMixin):
     film_work = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
     genre = models.ForeignKey('Genre', on_delete=models.CASCADE)
-    created = models.DateTimeField(_('created'), auto_now_add=True)
+    created_at = models.DateTimeField(_('created'), auto_now_add=True)
 
     class Meta:
         db_table = "content\".\"genre_film_work"
@@ -88,3 +91,6 @@ class PersonFilmwork(UUIDMixin):
 
     class Meta:
         db_table = "content\".\"person_film_work"
+        indexes = [
+            models.Index(fields=['film_work_id', 'person_id'], name='film_work_person_idx'),
+        ]
