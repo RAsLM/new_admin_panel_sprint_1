@@ -14,7 +14,7 @@ class SQLiteExtractor:
 
     def __init__(self):
         self.queries = {
-            FilmWork: "SELECT title, description, creation_date, type, created_at, updated_at, id, rating FROM film_work;",
+            FilmWork: "SELECT title, description, creation_date, file_path, type, created_at, updated_at, id, rating FROM film_work;",
             Genre: "SELECT name, description, created_at, updated_at, id from genre;",
             GenreFilmWork: "SELECT film_work_id, genre_id, created_at, id from genre_film_work;",
             Person: "SELECT full_name, created_at, updated_at, id from person;",

@@ -6,9 +6,9 @@ from dataclasses import dataclass, field
 @dataclass
 class FilmWork:
     title: str
-    file_path: str
-    creation_date: datetime
     description: str
+    creation_date: datetime
+    file_path: str
     type: str
     created_at: datetime
     updated_at: datetime
