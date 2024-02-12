@@ -10,11 +10,3 @@ def sqlite_conn_context(db_path: str):
     finally:
         connection.close()
 
-
-@contextmanager
-def sqlite_curs_context(sqlite_conn: sqlite3.Connection):
-    sqlite_cursor = sqlite_conn.cursor()
-    try:
-        yield sqlite_cursor
-    finally:
-        sqlite_cursor.close()

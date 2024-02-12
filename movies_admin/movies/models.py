@@ -1,7 +1,9 @@
 import uuid
+
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
+from django.db.models.functions import Now
 
 
 class UUIDMixin(models.Model):
@@ -35,7 +37,7 @@ class Genre(UUIDMixin, TimeStampedMixin):
 class Filmwork(UUIDMixin, TimeStampedMixin):
     title = models.CharField(_('title'), max_length=255)
     description = models.TextField(_('description'), blank=True)
-    creation_date = models.DateTimeField()
+    creation_date = models.DateTimeField(default=Now())
     rating = models.FloatField(_('rating'), blank=True,
                                validators=[MinValueValidator(0),
                                            MaxValueValidator(100)])
@@ -62,6 +64,7 @@ class GenreFilmwork(UUIDMixin):
     created_at = models.DateTimeField(_('created'), auto_now_add=True)
 
     class Meta:
+        unique_together = ('film_work', 'genre',)
         db_table = "content\".\"genre_film_work"
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанрыы'
@@ -87,10 +90,11 @@ class PersonFilmwork(UUIDMixin):
     film_work = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
     person = models.ForeignKey('Person', on_delete=models.CASCADE)
     role = models.TextField(_('role'))
-    created = models.DateTimeField(_('created'), auto_now_add=True)
+    created_at = models.DateTimeField(_('created'), auto_now_add=True)
 
     class Meta:
         db_table = "content\".\"person_film_work"
+        unique_together = ('film_work', 'person', )
         indexes = [
-            models.Index(fields=['film_work_id', 'person_id'], name='film_work_person_idx'),
+            models.Index(fields=['film_work_id', 'person_id', 'role'], name='film_work_person_idx'),
         ]
