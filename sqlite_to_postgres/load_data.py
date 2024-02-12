@@ -1,6 +1,8 @@
 import os
 import sqlite3
-from sqlite_context import sqlite_conn_context, sqlite_curs_context
+from contextlib import closing
+
+from sqlite_context import sqlite_conn_context
 
 import psycopg2
 from dotenv import load_dotenv
@@ -22,13 +24,10 @@ class SQLiteExtractor:
         }
 
     def extract_tables(self, connection, dt, query):
-        with sqlite_curs_context(connection) as sqlite_cursor:
-            try:
-                sqlite_cursor.execute(query)
-            except sqlite3.Error as sqlite_err:
-                raise sqlite_err
+        with closing(connection.cursor()) as sqlite_cursor:
 
-            data = sqlite_cursor.fetchall()
+            sqlite_cursor.execute(query)
+            data = sqlite_cursor.fetchmany()
             dt_data = [dt(*element) for element in data]
 
             return dt_data
@@ -48,13 +47,16 @@ class PostgresSaver:
     def save_all_data(self, data, connection, dt):
         column_names = [field.name for field in fields(data[0])]  # [id, name]
         column_names_str = ','.join(column_names)
-        print(column_names_str)
         # В зависимости от количества колонок генерируем под них %s.
         col_count = ', '.join(['%s'] * len(column_names))  # '%s, %
 
         bind_values = ','.join(connection.cursor().mogrify(f"({col_count})", astuple(field)).decode('utf-8') for field in data)
 
         table_name = self.tables[dt]
+
+        if table_name == 'film_work':
+            for field in data:
+                print(field)
 
         query = f"INSERT INTO content.{table_name} ({column_names_str}) VALUES {bind_values} ON CONFLICT (id) DO NOTHING"
 
