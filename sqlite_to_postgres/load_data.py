@@ -54,10 +54,6 @@ class PostgresSaver:
 
         table_name = self.tables[dt]
 
-        if table_name == 'film_work':
-            for field in data:
-                print(field)
-
         query = f"INSERT INTO content.{table_name} ({column_names_str}) VALUES {bind_values} ON CONFLICT (id) DO NOTHING"
 
         connection.cursor().execute(query)

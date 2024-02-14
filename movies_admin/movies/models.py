@@ -23,7 +23,7 @@ class TimeStampedMixin(models.Model):
 
 class Genre(UUIDMixin, TimeStampedMixin):
     name = models.CharField(_('name'), max_length=255)
-    description = models.TextField(_('description'), blank=True)
+    description = models.TextField(_('description'), null=True, blank=True)
 
     class Meta:
         db_table = "content\".\"genre"
@@ -36,14 +36,14 @@ class Genre(UUIDMixin, TimeStampedMixin):
 
 class Filmwork(UUIDMixin, TimeStampedMixin):
     title = models.CharField(_('title'), max_length=255)
-    description = models.TextField(_('description'), blank=True)
-    creation_date = models.DateTimeField(default=Now())
+    description = models.TextField(_('description'), null=True, blank=True)
+    creation_date = models.DateTimeField(default=Now(), null=True, blank=True)
     rating = models.FloatField(_('rating'), blank=True,
                                validators=[MinValueValidator(0),
                                            MaxValueValidator(100)])
     type = models.CharField(_('type'), max_length=255)
     genres = models.ManyToManyField(Genre, through='GenreFilmwork')
-    certificate = models.CharField(_('certificate'), max_length=512, blank=True)
+    certificate = models.CharField(_('certificate'), null=True, max_length=512, blank=True)
     file_path = models.FileField(_('file'), blank=True, null=True, upload_to='movies/')
 
     class Meta:
@@ -89,7 +89,7 @@ class Person(UUIDMixin, TimeStampedMixin):
 class PersonFilmwork(UUIDMixin):
     film_work = models.ForeignKey('Filmwork', on_delete=models.CASCADE)
     person = models.ForeignKey('Person', on_delete=models.CASCADE)
-    role = models.TextField(_('role'))
+    role = models.TextField(_('role'), null='true', default='actor')
     created_at = models.DateTimeField(_('created'), auto_now_add=True)
 
     class Meta:
